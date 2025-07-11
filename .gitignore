@@ -21,3 +21,6 @@ docs/_build/
 .venv
 .idea
 *.json
+
+analyze*.sh
+*.txt
