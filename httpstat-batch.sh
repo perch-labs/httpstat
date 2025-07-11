@@ -239,8 +239,10 @@ else
     echo "    brew install jq"
 fi
 
+BASENAME=$(basename "$OUTPUT_FILE" .json)
+
 # Create analysis script (macOS compatible)
-cat > "analyze_${OUTPUT_FILE%.json}.sh" << 'EOF'
+cat > "analyze_${BASENAME}.sh" << 'EOF'
 #!/bin/bash
 # Analysis script for httpstat results (macOS compatible)
 
@@ -290,5 +292,5 @@ if [[ $total_requests -gt 0 ]]; then
 fi
 EOF
 
-chmod +x "analyze_${OUTPUT_FILE%.json}.sh"
-echo "Created analysis script: analyze_${OUTPUT_FILE%.json}.sh"
+chmod +x "analyze_${BASENAME}.sh"
+echo "Created analysis script: analyze_${BASENAME}.sh"
