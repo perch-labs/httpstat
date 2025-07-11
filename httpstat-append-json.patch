@@ -1,0 +1,67 @@
+diff --git a/httpstat.py b/httpstat.py
+index 1234567..abcdefg 100644
+--- a/httpstat.py
++++ b/httpstat.py
+@@ -15,7 +15,7 @@ import subprocess
+ import tempfile
+
+
+-__version__ = '1.3.2'
++__version__ = '1.3.3'
+
+
+ PY3 = sys.version_info >= (3,)
+@@ -45,6 +45,7 @@ ENV_SAVE_BODY = Env('{prefix}_SAVE_BODY')
+ ENV_CURL_BIN = Env('{prefix}_CURL_BIN')
+ ENV_METRICS_ONLY = Env('{prefix}_METRICS_ONLY')
+ ENV_DEBUG = Env('{prefix}_DEBUG')
++ENV_APPEND_JSON = Env('{prefix}_APPEND_JSON')
+
+
+ curl_format = """{
+@@ -103,6 +104,9 @@ Options:
+                         set to `false` to disable this feature. Default is `true`
+   HTTPSTAT_CURL_BIN     Indicate the curl bin path to use. Default is `curl`
+                         from current shell $PATH.
++  HTTPSTAT_APPEND_JSON  Set to a file path to append timing stats to a JSON file.
++                        Each request will be appended as a new line. Set to `false`
++                        to disable. Default is `false`.
+   HTTPSTAT_DEBUG        Set to `true` to see debugging logs. Default is `false`
+ """[1:-1]
+     print(help)
+@@ -119,6 +123,7 @@ def main():
+     save_body = 'true' in ENV_SAVE_BODY.get('true').lower()
+     curl_bin = ENV_CURL_BIN.get('curl')
+     metrics_only = 'true' in ENV_METRICS_ONLY.get('false').lower()
++    append_json = ENV_APPEND_JSON.get('false')
+     is_debug = 'true' in ENV_DEBUG.get('false').lower()
+
+     # configure logging
+@@ -135,6 +140,7 @@ def main():
+         show_speed=show_speed,
+         save_body=save_body,
+         curl_bin=curl_bin,
++        append_json=append_json,
+         is_debug=is_debug,
+     ))
+
+@@ -224,6 +230,18 @@ def main():
+         range_transfer=d['time_total'] - d['time_starttransfer'],
+     )
+
++    # append to json file if specified
++    if append_json and append_json.lower() != 'false':
++        import datetime
++        log_entry = d.copy()
++        log_entry['timestamp'] = datetime.datetime.now().isoformat()
++        log_entry['url'] = url
++        try:
++            with open(append_json, 'a') as f:
++                f.write(json.dumps(log_entry) + '\n')
++        except IOError as e:
++            lg.warning('Could not append to JSON file %s: %s', append_json, e)
++
+     # print json if metrics_only is enabled
+     if metrics_only:
+         print(json.dumps(d, indent=2))
+         quit(None, 0)

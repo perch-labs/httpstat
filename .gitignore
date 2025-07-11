@@ -9,6 +9,7 @@
 
 # Distribution / packaging
 /build/
+/patch-build/
 /dist/
 *.egg-info/
 
@@ -17,3 +18,6 @@ docs/_build/
 
 # Others #
 .virtualenv
+.venv
+.idea
+*.json
