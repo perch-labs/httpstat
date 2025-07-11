@@ -236,7 +236,7 @@ if command -v jq &> /dev/null; then
     echo "    grep '^{' $OUTPUT_FILE | jq -s 'sort_by(.time_total) | reverse | .[0:5]'"
 else
     echo "  # Install jq for JSON analysis:"
-    echo "    brew install jq"
+    echo "    brew/apt/OTHER install jq"
 fi
 
 BASENAME=$(basename "$OUTPUT_FILE" .json)
@@ -287,7 +287,7 @@ if [[ $total_requests -gt 0 ]]; then
         done
     else
         echo
-        echo "Install jq for detailed analysis: brew install jq"
+        echo "Install jq for detailed analysis: brew/apt/OTHER install jq"
     fi
 fi
 EOF
