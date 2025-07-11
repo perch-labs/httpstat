@@ -168,11 +168,11 @@ for i in $(seq 0 $((${#ENDPOINTS[@]} - 1))); do
 
         # Run httpstat and capture exit code
         if timeout 30 httpstat "$endpoint" > /dev/null 2>&1; then
-            ((total_tests++))
+            total_tests=$((total_tests + 1))
         else
-            ((failed_tests++))
-            ((endpoint_failures++))
-            ((total_tests++))
+            failed_tests=$((failed_tests + 1))
+            endpoint_failures=$((endpoint_failures + 1))
+            total_tests=$((total_tests + 1))
             error_msg="Failed test $j for $endpoint at $(date)"
             echo "# $error_msg" >> "$OUTPUT_FILE"
         fi
